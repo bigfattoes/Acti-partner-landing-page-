@@ -22,7 +22,8 @@
   var FULL = attr("sections", "full") !== "form";
 
   var TYPES = ["Academy / club", "Brand / sponsor", "Performer / speaker", "School / community group", "Other"];
-  var WHATSAPP = "https://api.whatsapp.com/send?phone=971524586156&text=" + encodeURIComponent("Hello Support Team,\nI would like to know: Become our Partner\n#partner");
+  // Stefanie's WhatsApp, with a starter message filled in.
+  var WHATSAPP = "https://wa.me/971529460819?text=" + encodeURIComponent("Hi, I'd like to partner with ActivateMe® Fest Season 2. #partner");
 
   // Two-tone icons on a 24px grid. Each part is [kind, path]:
   //   s = outline (currentColor), l = soft body fill, f = orange accent fill, b = background fill (hides lines behind it)
@@ -69,7 +70,8 @@
   var CSS = [
     ":host{all:initial;display:block;font-family:inherit;color:#1d1d24;--p:#6F2FA0;--pd:#5A2386;--o:#EE6A1A;--line:#E6E1EE}",
     "*{box-sizing:border-box;font-family:inherit}",
-    ".wrap{max-width:1120px;margin:0 auto;padding:8px 16px 32px}",
+    // Fills the width of the page it sits in, so it lines up with the content around it.
+    ".wrap{padding:8px 0 32px}",
     ".card{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}",
     ".card.solo{grid-template-columns:1fr}",
     "svg{display:block;overflow:visible}",
