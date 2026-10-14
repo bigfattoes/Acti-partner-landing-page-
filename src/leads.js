@@ -12,14 +12,8 @@ import { guard, esc, csvCell } from "./helpers.js";
 
 const STATUSES = ["New", "Contacted", "Interested", "Joined", "Declined"];
 const TYPES = ["Academy / club", "Brand / sponsor", "Performer / speaker", "School / community group", "Other"];
-const INTERESTS = [
-  "Trial sessions & demos",
-  "Interactive booth",
-  "Event sponsorship",
-  "Title sponsorship",
-  "Community programme",
-  "Stage performance / talk",
-];
+// Same four options as the "Partnership Opportunities" cards on activatemefest.com.
+const INTERESTS = ["Title Sponsor", "Event Sponsorships", "Interactive Booths", "Community Programs"];
 let ready = false;
 
 async function ensureTable(db) {
