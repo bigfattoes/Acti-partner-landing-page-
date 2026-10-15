@@ -9,6 +9,7 @@
  * Optional attributes on the script tag:
  *   data-sections  "full" (default: stats, steps and form side by side) or "form" (form only)
  *   data-endpoint  where applications are sent (default: same host as this script + /apply)
+ *   data-event     the event alias sent with each application (default: activate-me-festival)
  */
 (function () {
   "use strict";
@@ -20,6 +21,7 @@
   var origin = script && script.src ? new URL(script.src, location.href).origin : location.origin;
   var ENDPOINT = attr("endpoint", origin + "/apply");
   var FULL = attr("sections", "full") !== "form";
+  var EVENT = attr("event", "activate-me-festival");
 
   var TYPES = ["Academy / club", "Brand / sponsor", "Performer / speaker", "School / community group", "Other"];
   // Stefanie's WhatsApp, with a starter message filled in.
@@ -262,7 +264,7 @@
     var data = {
       org: f("org").value, type: f("type").value, activity: f("activity").value, name: f("name").value, role: f("role").value,
       email: f("email").value, phone: f("phone").value, website: f("website").value, message: f("message").value,
-      company_url: f("company_url").value, consent: f("consent").checked, page: location.pathname,
+      company_url: f("company_url").value, consent: f("consent").checked, page: location.pathname, event: EVENT,
       interests: Array.prototype.filter.call(form.querySelectorAll("input[name=interests]"), function (i) { return i.checked; }).map(function (i) { return i.value; }),
     };
     var missing = [];
