@@ -60,7 +60,8 @@
     ["Interactive Booths", "Samples & activities", "stall", "hop"],
     ["Community Programs", "Youth & health", "community", "beat"],
   ];
-  var STATS = [[4500, "+", "visitors at Season 1"], [75, "+", "academies & clubs"], [120, "+", "partners & activations"], [2, "", "days of sport, tech & play"]];
+  // Season 2 projections.
+  var STATS = [[8000, "+", "expected visitors"], [100, "+", "expected academies & clubs"], [150, "+", "expected partners & activations"], [2, "", "days of sport, tech & play"]];
   var STEPS = [
     ["plane", "Apply", "Tell us about you. It takes about two minutes."],
     ["chat", "Talk to our team", "We'll find the right fit and package."],
@@ -91,8 +92,6 @@
     ".stat b{display:block;font-size:34px;line-height:1;font-weight:900;font-style:italic;letter-spacing:-.02em;font-variant-numeric:tabular-nums}",
     ".stat b i{color:var(--o);font-style:italic}",
     ".stat span{display:block;margin-top:6px;font-size:12.5px;color:rgba(255,255,255,.78)}",
-    ".quote{position:relative;margin:0 0 24px;padding-left:28px;font-size:14px;line-height:1.5;color:rgba(255,255,255,.92)}",
-    ".quote:before{content:'\\201C';position:absolute;left:0;top:-8px;font-size:44px;line-height:1;font-weight:900;color:var(--o);font-family:Georgia,serif}",
     ".steps{list-style:none;margin:0;padding:0;display:grid;gap:0}",
     ".step{position:relative;display:grid;grid-template-columns:34px 1fr;gap:14px;padding-bottom:16px}",
     ".step:not(:last-child):after{content:'';position:absolute;left:16px;top:38px;bottom:4px;border-left:1.5px dashed rgba(255,255,255,.3)}",
@@ -177,7 +176,6 @@
     '<p class="lead rv">Meet thousands of active families in one weekend and sign up new members on the spot.</p>' +
     '<div class="stats rv">' +
     STATS.map(function (s) { return '<div class="stat"><b data-to="' + s[0] + '" data-suf="' + esc(s[1]) + '">' + num(s[0], s[1]) + "</b><span>" + esc(s[2]) + "</span></div>"; }).join("") + "</div>" +
-    '<p class="quote rv">Families found their children\'s after-school activities through partners they met at Season 1.</p>' +
     '<ol class="steps rv">' +
     STEPS.map(function (s, i) { return '<li class="step"><span class="si">' + icon(ICONS[s[0]]) + "</span><div><small>0" + (i + 1) + "</small><b>" + esc(s[1]) + "</b><span>" + esc(s[2]) + "</span></div></li>"; }).join("") + "</ol>" +
     '<div class="talk rv"><span>Prefer to talk first?</span>' +
