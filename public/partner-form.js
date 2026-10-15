@@ -61,7 +61,7 @@
     ["Community Programs", "Youth & health", "community", "beat"],
   ];
   // Season 2 projections.
-  var STATS = [[8000, "+", "expected visitors"], [100, "+", "expected academies & clubs"], [150, "+", "expected partners & activations"], [2, "", "days of sport, tech & play"]];
+  var STATS = [[8000, "+", "families"], [100, "+", "clubs & academies"], [150, "+", "partners & activations"], [2, "", "days of sport, tech & play"]];
   var STEPS = [
     ["plane", "Apply", "Tell us about you. It takes about two minutes."],
     ["chat", "Talk to our team", "We'll find the right fit and package."],
