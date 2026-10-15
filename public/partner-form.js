@@ -75,14 +75,14 @@
     ".wrap{padding:8px 0 40px}",
     "h2.title{margin:0 0 18px;color:var(--o);font-size:clamp(28px,3.4vw,40px);line-height:1.05;font-weight:900;font-style:italic;letter-spacing:-.02em}",
     // Rounded white card; the purple panel sits inside it as its own rounded tile.
-    ".card{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:8px;padding:8px;background:#fff;border:1px solid var(--line);border-radius:30px;box-shadow:0 1px 2px rgba(40,10,70,.04),0 20px 50px -12px rgba(40,10,70,.14)}",
+    ".card{display:grid;grid-template-columns:minmax(0,4.3fr) minmax(0,7.7fr);gap:8px;padding:8px;background:#fff;border:1px solid var(--line);border-radius:30px;box-shadow:0 1px 2px rgba(40,10,70,.04),0 20px 50px -12px rgba(40,10,70,.14)}",
     ".card.solo{grid-template-columns:1fr}",
     "svg{display:block;overflow:visible}",
     "svg .s{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}",
     "svg .l{fill:var(--lt)}svg .f{fill:var(--acc)}svg .b{fill:var(--ib)}",
 
     // Left: brand purple, like the Partnership Opportunities cards
-    ".side{display:flex;flex-direction:column;justify-content:space-between;color:#fff;background:var(--p);border-radius:24px;padding:34px 30px 30px;--lt:rgba(255,255,255,.14);--acc:var(--o);--ib:var(--p)}",
+    ".side{align-self:start;position:sticky;top:16px;color:#fff;background:var(--p);border-radius:24px;padding:34px 30px 32px;--lt:rgba(255,255,255,.14);--acc:var(--o);--ib:var(--p)}",
     ".eyebrow{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#FFB27A;margin:0}",
     ".eyebrow span{color:rgba(255,255,255,.75);font-weight:600;letter-spacing:.06em}",
     "h2{font-size:clamp(28px,3vw,36px);line-height:1.04;margin:10px 0 12px;font-weight:900;font-style:italic;letter-spacing:-.02em}",
@@ -168,7 +168,7 @@
     "@keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}",
     "@keyframes beat{0%,100%{transform:scale(1)}30%{transform:scale(1.18)}60%{transform:scale(.96)}}",
 
-    "@media (max-width:900px){.card{grid-template-columns:1fr}.side{padding:28px 24px 26px}.lead{max-width:none}.stats{grid-template-columns:repeat(4,1fr)}.steps{grid-template-columns:repeat(3,1fr);gap:16px}.step{grid-template-columns:1fr;gap:8px;padding:0}.step:after{display:none}form{padding:22px 18px 18px}}",
+    "@media (max-width:900px){.card{grid-template-columns:1fr}.side{position:static}.side{padding:28px 24px 26px}.lead{max-width:none}.stats{grid-template-columns:repeat(4,1fr)}.steps{grid-template-columns:repeat(3,1fr);gap:16px}.step{grid-template-columns:1fr;gap:8px;padding:0}.step:after{display:none}form{padding:22px 18px 18px}}",
     // Phones: tighter spacing, short fields stay side by side, tile descriptions hidden.
     "@media (max-width:640px){.wrap{padding-bottom:28px}h2.title{margin-bottom:14px}.card{padding:6px;border-radius:26px;gap:6px}.side{border-radius:21px;padding:24px 20px 22px}h2{margin:8px 0 10px}.lead{font-size:14.5px}.stats{grid-template-columns:1fr 1fr;gap:6px;margin:20px 0 20px}.stat{padding:12px 14px;border-radius:15px}.stat b{font-size:27px}.steps{grid-template-columns:1fr;gap:0}.step{grid-template-columns:30px 1fr;gap:12px;padding-bottom:12px}.step:not(:last-child):after{display:block;left:14px;top:34px}.si,.si svg{width:30px;height:30px}.step div>span{display:none}form,.solo form{padding:20px 14px 16px}.fh{margin-bottom:14px}h3{font-size:20px}.grid{gap:12px 10px}.grid>label:not(.pair),.grid>fieldset{grid-column:1/-1}.opts{grid-template-columns:1fr 1fr}input,select,textarea{padding:11px 12px;font-size:16px}.tile{padding:12px 11px;border-radius:16px}.tile small{display:none}.ti{margin-bottom:4px}.submit{width:100%;justify-content:center}.talk{margin-top:18px;padding-top:14px}}",
     "@media (prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}.si .s,.ti .s,.ok path{stroke-dashoffset:0}.si .l,.si .f,.ti .l,.ti .f{opacity:1}}",
