@@ -139,8 +139,7 @@
     ".submit svg{width:18px;height:18px;transition:transform .2s var(--ease)}.submit .s{stroke-width:2.2}.submit:hover svg{transform:translateX(4px)}",
     ".submit:disabled{opacity:.65;cursor:wait;transform:none}",
     ".err{color:#B42318;font-size:13.5px;flex:1;min-width:200px}",
-    // "Prefer to talk first?" sits under the button, where people decide.
-    ".talk{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-top:22px;padding-top:18px;border-top:1px solid var(--line);font-size:13.5px;color:#6b6577}",
+    ".talk{grid-column:1/-1;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px 14px;margin:0 18px;padding:16px 0 12px;border-top:1px solid var(--line);font-size:13.5px;color:#6b6577}",
     ".talk a{display:inline-flex;align-items:center;gap:7px;font-weight:800;text-decoration:none;color:var(--p);transition:background .2s var(--ease),transform .2s var(--ease)}",
     ".talk svg{width:17px;height:17px}",
     ".wa{background:#F3EBFA;padding:9px 15px;border-radius:999px}.wa:hover{background:#EADDF6;transform:translateY(-1px)}",
@@ -170,7 +169,7 @@
 
     "@media (max-width:900px){.card{grid-template-columns:1fr}.side{position:static}.side{padding:28px 24px 26px}.lead{max-width:none}.stats{grid-template-columns:repeat(4,1fr)}.steps{grid-template-columns:repeat(3,1fr);gap:16px}.step{grid-template-columns:1fr;gap:8px;padding:0}.step:after{display:none}form{padding:22px 18px 18px}}",
     // Phones: tighter spacing, short fields stay side by side, tile descriptions hidden.
-    "@media (max-width:640px){.wrap{padding-bottom:28px}h2.title{margin-bottom:14px}.card{padding:6px;border-radius:26px;gap:6px}.side{border-radius:21px;padding:24px 20px 22px}h2{margin:8px 0 10px}.lead{font-size:14.5px}.stats{grid-template-columns:1fr 1fr;gap:6px;margin:20px 0 20px}.stat{padding:12px 14px;border-radius:15px}.stat b{font-size:27px}.steps{grid-template-columns:1fr;gap:0}.step{grid-template-columns:30px 1fr;gap:12px;padding-bottom:12px}.step:not(:last-child):after{display:block;left:14px;top:34px}.si,.si svg{width:30px;height:30px}.step div>span{display:none}form,.solo form{padding:20px 14px 16px}.fh{margin-bottom:14px}h3{font-size:20px}.grid{gap:12px 10px}.grid>label:not(.pair),.grid>fieldset{grid-column:1/-1}.opts{grid-template-columns:1fr 1fr}input,select,textarea{padding:11px 12px;font-size:16px}.tile{padding:12px 11px;border-radius:16px}.tile small{display:none}.ti{margin-bottom:4px}.submit{width:100%;justify-content:center}.talk{margin-top:18px;padding-top:14px}}",
+    "@media (max-width:640px){.wrap{padding-bottom:28px}h2.title{margin-bottom:14px}.card{padding:6px;border-radius:26px;gap:6px}.side{border-radius:21px;padding:24px 20px 22px}h2{margin:8px 0 10px}.lead{font-size:14.5px}.stats{grid-template-columns:1fr 1fr;gap:6px;margin:20px 0 20px}.stat{padding:12px 14px;border-radius:15px}.stat b{font-size:27px}.steps{grid-template-columns:1fr;gap:0}.step{grid-template-columns:30px 1fr;gap:12px;padding-bottom:12px}.step:not(:last-child):after{display:block;left:14px;top:34px}.si,.si svg{width:30px;height:30px}.step div>span{display:none}form,.solo form{padding:20px 14px 16px}.fh{margin-bottom:14px}h3{font-size:20px}.grid{gap:12px 10px}.grid>label:not(.pair),.grid>fieldset{grid-column:1/-1}.opts{grid-template-columns:1fr 1fr}input,select,textarea{padding:11px 12px;font-size:16px}.tile{padding:12px 11px;border-radius:16px}.tile small{display:none}.ti{margin-bottom:4px}.submit{width:100%;justify-content:center}.talk{margin:0 12px;padding:14px 0 10px}}",
     "@media (prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}.si .s,.ti .s,.ok path{stroke-dashoffset:0}.si .l,.si .f,.ti .l,.ti .f{opacity:1}}",
   ].join("\n");
 
@@ -208,10 +207,11 @@
     '<label class="hp" aria-hidden="true">Leave empty<input name="company_url" tabindex="-1" autocomplete="off"></label>' +
     '<label class="full consent"><input type="checkbox" name="consent" required>I agree that MWAN Events can contact me about partnering with ActivateMe® Fest.</label>' +
     '</div><div class="foot"><button class="submit" type="submit">Send application' + icon(ICONS.arrow) + '</button><div class="err" role="alert"></div></div>' +
-    '<div class="talk"><span>Prefer to talk first?</span>' +
-    '<a class="wa" href="' + WHATSAPP + '" target="_blank" rel="noopener">' + icon(ICONS.whatsapp) + "WhatsApp us</a>" +
-    '<a class="em" href="mailto:stefanie@mwanevents.com">Email the team</a></div>' +
     "</form>";
+  // "Prefer to talk first?" runs centred along the bottom of the whole card.
+  var talk = '<div class="talk"><span>Prefer to talk first?</span>' +
+    '<a class="wa" href="' + WHATSAPP + '" target="_blank" rel="noopener">' + icon(ICONS.whatsapp) + "WhatsApp us</a>" +
+    '<a class="em" href="mailto:stefanie@mwanevents.com">Email the team</a></div>';
 
   var host = document.getElementById("activateme-partner");
   if (!host) {
@@ -222,7 +222,7 @@
   }
   var root = host.attachShadow({ mode: "open" });
   root.innerHTML = "<style>" + CSS + '</style><div class="wrap">' + (FULL ? '<h2 class="title">Ready to partner?</h2>' : "") +
-    '<div class="card' + (FULL ? "" : " solo") + '">' + side + formHTML + "</div></div>";
+    '<div class="card' + (FULL ? "" : " solo") + '">' + side + formHTML + talk + "</div></div>";
   var card = root.querySelector(".card");
 
   // Count the stats up from zero.
