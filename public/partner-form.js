@@ -191,20 +191,21 @@
   var check = icon([["s", "M5 12.5l4.5 4.5L19 7.5"]]);
   var formHTML =
     '<form novalidate id="apply"><div class="fh"><h3>Apply to partner with us</h3><span>Takes about 2 minutes</span></div><div class="grid">' +
-    '<label><span>Organisation name <i>*</i></span><input name="org" required maxlength="150" autocomplete="organization"></label>' +
-    '<label><span>Type of organisation <i>*</i></span><select name="type" required><option value="">Choose…</option>' +
+    '<label><span>Organisation name <i>*</i></span><input name="company_name" required maxlength="150" autocomplete="organization"></label>' +
+    '<label><span>Type of organisation <i>*</i></span><select name="organisation_type" required><option value="">Choose…</option>' +
     TYPES.map(function (t) { return "<option>" + esc(t) + "</option>"; }).join("") + "</select></label>" +
-    '<label><span>What do you do?</span><input name="activity" maxlength="150" placeholder="e.g. Kids football academy, ages 4–14"></label>' +
-    '<label><span>Website or Instagram</span><input name="website" maxlength="300" placeholder="https://… or @yourclub"></label>' +
+    '<label class="full"><span>What do you do?</span><input name="activity" maxlength="150" placeholder="e.g. Kids football academy, ages 4–14"></label>' +
     '<fieldset class="full"><legend>Interested in</legend><div class="opts">' +
     INTERESTS.map(function (o) {
       return '<label class="opt" style="--a:' + o[3] + '"><input type="checkbox" name="interests" value="' + esc(o[0]) + '"><span class="tile">' +
         '<span class="tick">' + check + '</span><span class="ti">' + icon(ICONS[o[2]]) + "</span><b>" + esc(o[0]) + "</b><small>" + esc(o[1]) + "</small></span></label>";
     }).join("") + "</div></fieldset>" +
-    '<label class="pair"><span>Your name <i>*</i></span><input name="name" required maxlength="120" autocomplete="name"></label>' +
-    '<label class="pair"><span>Your role</span><input name="role" maxlength="120" autocomplete="organization-title" placeholder="e.g. Founder"></label>' +
+    '<label class="pair"><span>First name <i>*</i></span><input name="first_name" required maxlength="60" autocomplete="given-name"></label>' +
+    '<label class="pair"><span>Last name <i>*</i></span><input name="last_name" required maxlength="60" autocomplete="family-name"></label>' +
+    '<label class="pair"><span>Your role</span><input name="designation" maxlength="120" autocomplete="organization-title" placeholder="e.g. Founder"></label>' +
     '<label class="pair"><span>Email <i>*</i></span><input name="email" type="email" required maxlength="200" autocomplete="email"></label>' +
-    '<label class="pair"><span>Phone / WhatsApp <i>*</i></span><input name="phone" type="tel" required maxlength="40" autocomplete="tel" placeholder="+971"></label>' +
+    '<label class="pair"><span>Phone / WhatsApp <i>*</i></span><input name="mobile_number" type="tel" required maxlength="40" autocomplete="tel" placeholder="+971"></label>' +
+    '<label class="pair"><span>Website or Instagram</span><input name="website" maxlength="300" placeholder="https://… or @yourclub"></label>' +
     '<label class="full"><span>Anything else we should know?</span><textarea name="message" rows="2" maxlength="2000"></textarea></label>' +
     '<label class="hp" aria-hidden="true">Leave empty<input name="company_url" tabindex="-1" autocomplete="off"></label>' +
     '<label class="full consent"><input type="checkbox" name="consent" required>I agree that MWAN Events can contact me about partnering with ActivateMe® Fest.</label>' +
@@ -262,17 +263,18 @@
     err.textContent = "";
     var f = function (n) { return form.elements.namedItem(n); };
     var data = {
-      org: f("org").value, type: f("type").value, activity: f("activity").value, name: f("name").value, role: f("role").value,
-      email: f("email").value, phone: f("phone").value, website: f("website").value, message: f("message").value,
+      first_name: f("first_name").value, last_name: f("last_name").value, email: f("email").value,
+      company_name: f("company_name").value, mobile_number: f("mobile_number").value, designation: f("designation").value,
+      organisation_type: f("organisation_type").value, activity: f("activity").value, website: f("website").value, message: f("message").value,
       company_url: f("company_url").value, consent: f("consent").checked, page: location.pathname, event: EVENT,
       interests: Array.prototype.filter.call(form.querySelectorAll("input[name=interests]"), function (i) { return i.checked; }).map(function (i) { return i.value; }),
     };
     var missing = [];
-    if (!data.org.trim()) missing.push("organisation name");
-    if (!data.type) missing.push("type of organisation");
-    if (!data.name.trim()) missing.push("your name");
+    if (!data.company_name.trim()) missing.push("organisation name");
+    if (!data.organisation_type) missing.push("type of organisation");
+    if (!data.first_name.trim() || !data.last_name.trim()) missing.push("your first and last name");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())) missing.push("a valid email");
-    if (data.phone.replace(/\D/g, "").length < 7) missing.push("a phone number");
+    if (data.mobile_number.replace(/\D/g, "").length < 7) missing.push("a phone number");
     if (missing.length) { err.textContent = "Please add " + missing.join(", ") + "."; return; }
     if (!data.consent) { err.textContent = "Please tick the box so our team can contact you."; return; }
 
@@ -282,10 +284,10 @@
       .then(function (r) { return r.json().catch(function () { return {}; }); })
       .then(function (res) {
         if (!res.ok) throw new Error(res.error || "");
-        track("partner_application", { org_type: data.type });
+        track("partner_application", { org_type: data.organisation_type });
         form.classList.add("sent");
         form.innerHTML = '<div class="done"><svg class="ok" viewBox="0 0 52 52"><circle cx="26" cy="26" r="26"/><path pathLength="1" d="M15 27l7 7 15-16"/></svg>' +
-          "<b>Thank you, " + esc(data.org.trim()) + "!</b><p>Your application is with our partnerships team and we'll be in touch soon.</p>" +
+          "<b>Thank you, " + esc(data.company_name.trim()) + "!</b><p>Your application is with our partnerships team and we'll be in touch soon.</p>" +
           '<p class="alt">Can\'t wait? Email <a href="mailto:stefanie@mwanevents.com">stefanie@mwanevents.com</a>.</p></div>';
         form.scrollIntoView({ behavior: "smooth", block: "center" });
       })

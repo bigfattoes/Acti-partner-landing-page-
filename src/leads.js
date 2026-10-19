@@ -45,15 +45,16 @@ export async function apply(request, env, cors, json) {
   if (!b) return json({ ok: false, error: "Invalid form." }, 400, cors);
   if (str(b.company_url, 200)) return json({ ok: true }, 200, cors); // honeypot field: bots fill it, people never see it
 
+  // Field names match the "Become a Partner" report in Mwan Events.
   const lead = {
-    org: str(b.org, 150),
-    type: TYPES.includes(b.type) ? b.type : "Other",
+    org: str(b.company_name, 150),
+    type: TYPES.includes(b.organisation_type) ? b.organisation_type : "Other",
     activity: str(b.activity, 150),
     interests: (Array.isArray(b.interests) ? b.interests : []).filter((i) => INTERESTS.includes(i)).join(", "),
-    name: str(b.name, 120),
-    role: str(b.role, 120),
+    name: [str(b.first_name, 60), str(b.last_name, 60)].filter(Boolean).join(" "),
+    role: str(b.designation, 120),
     email: str(b.email, 200),
-    phone: str(b.phone, 40),
+    phone: str(b.mobile_number, 40),
     website: str(b.website, 300),
     message: str(b.message, 2000),
   };

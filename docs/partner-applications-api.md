@@ -1,189 +1,165 @@
-# Partner Applications API – specification
+ActivateMe® Partner Form – API details
 
-For the Mwan Events platform team. This describes what the ActivateMe® partner form sends, how the
-endpoint should validate it, and what it should reply. The form is already built and tested; once the
-endpoint exists, the form is pointed at it and nothing else changes for visitors.
+What the form sends, what to check, and what to reply. Prepared by Aseel
+(Marketing).
 
-## 1. How it works
+**Good news:** Reporting → **Become a Partner** already has First Name,
+Last Name, Email, Company Name, Mobile Number, Designation and Created
+date. The form now uses the same fields, so it could feed that report
+directly. It just needs a few **new columns** for the extra questions
+(marked below).
 
-1. A visitor fills in the partner form on the ActivateMe® Fest website (Partner page).
-2. The visitor's browser sends one `POST` request with a JSON body to the platform endpoint.
-3. The endpoint checks where the request came from, validates the fields, and saves the application
-   under the ActivateMe® Fest event.
-4. The endpoint replies with a small JSON object. The form shows a thank-you message, or the error
-   text from the reply.
+1\. How it works
 
-The request comes directly from the visitor's browser (not from a server), so the endpoint must
-support CORS (section 3).
+1.  Someone fills in the partner form on activatemefest.com.
 
-## 2. Endpoint
+2.  Their browser sends one POST request with the answers as JSON
+    (Content-Type: application/json) to your endpoint. No login needed,
+    it's a public form.
 
-| | |
-|---|---|
-| Method | `POST` |
-| URL | Chosen by the platform team, e.g. `https://events.mwancloud.com/api/partner-applications` |
-| Request body | JSON, `Content-Type: application/json` |
-| Authentication | None (public form). Protected by the domain allowlist, validation and rate limiting below |
+3.  Your API checks it, saves it in the **Become a Partner** report for
+    ActivateMe® Fest, and replies ok or not ok + message. The form then
+    shows a thank-you or the error message.
 
-## 3. Domain validation and CORS
+If an API already feeds the Become a Partner report, the form can use
+that one. Otherwise the address is up to you, e.g.
+https://events.mwancloud.com/api/partner-applications.
 
-**Allowed domains (origins):**
+2\. Allowed domains
 
-- `https://www.activatemefest.com`
-- `https://activatemefest.com`
-- `https://activateme.dev.mwancloud.com` (staging, for testing)
+Accept only requests whose Origin header is one of:
 
-**Rules:**
+- https://www.activatemefest.com
 
-- Read the `Origin` request header. If it is not in the list, reject with `403` and do not save.
-- Because the body is JSON, browsers first send an `OPTIONS` "preflight" request. For an allowed
-  origin, answer it with `204` and:
-  - `Access-Control-Allow-Origin: <the request's Origin>`
-  - `Access-Control-Allow-Methods: POST, OPTIONS`
-  - `Access-Control-Allow-Headers: Content-Type`
-  - `Access-Control-Max-Age: 86400`
-  - `Vary: Origin`
-- Include `Access-Control-Allow-Origin: <Origin>` and `Vary: Origin` on the `POST` response too,
-  including error responses, or the browser hides the reply from the form.
+- https://activatemefest.com
 
-**Note:** the `Origin` check stops other websites from sending applications through visitors'
-browsers, but a script outside a browser can fake the header. That's why we also recommend the
-extra protection in section 6.
+- https://activateme.dev.mwancloud.com (staging)
 
-## 4. Request payload
+Anything else: reply 403 and don't save. Because the request comes from
+the browser, the API also needs to answer the browser's OPTIONS check
+(CORS) for these domains with Access-Control-Allow-Origin: \<origin\>,
+Access-Control-Allow-Methods: POST, OPTIONS and
+Access-Control-Allow-Headers: Content-Type, and add
+Access-Control-Allow-Origin to every POST reply too, errors included.
 
-| Field | Type | Required | Rules | Example |
-|---|---|---|---|---|
-| `event` | string | yes | Event alias. Accept only known aliases (currently `activate-me-festival`) | `"activate-me-festival"` |
-| `org` | string | yes | Organisation name. Trim; 1–150 characters | `"Little Kickers Dubai"` |
-| `type` | string | yes | One of the type options below | `"Academy / club"` |
-| `activity` | string | no | What they do. Max 150 | `"Kids football academy, ages 4–14"` |
-| `interests` | array of strings | no | Zero or more of the interest options below; ignore anything else | `["Title Sponsor", "Interactive Booths"]` |
-| `name` | string | yes | Contact person. Trim; 1–120 | `"Sara Ahmed"` |
-| `role` | string | no | Max 120 | `"Founder"` |
-| `email` | string | yes | Valid email format. Max 200 | `"sara@example.com"` |
-| `phone` | string | yes | Phone / WhatsApp. Max 40; at least 7 digits | `"+971 50 123 4567"` |
-| `website` | string | no | Website URL or Instagram handle. Max 300 | `"@littlekickersdxb"` |
-| `message` | string | no | Free text. Max 2000 | `"We'd love a booth on both days."` |
-| `consent` | boolean | yes | Must be `true` ("I agree that MWAN Events can contact me…") | `true` |
-| `page` | string | no | Page path the form was sent from. Max 200 | `"/partner-with-us"` |
-| `company_url` | string | no | **Spam trap.** Hidden field; real people leave it empty (see section 6) | `""` |
+Note: the domain check stops other websites, but scripts can fake it, so
+please also add a rate limit (about 10 requests per minute per IP) and
+keep the spam trap below.
 
-**Type options** (`type`):
-`Academy / club`, `Brand / sponsor`, `Performer / speaker`, `School / community group`, `Other`
+3\. Inputs
 
-**Interest options** (`interests`), matching the Partnership Opportunities cards on the site:
-`Title Sponsor`, `Event Sponsorships`, `Interactive Booths`, `Community Programs`
+| **Field**         | **Required** | **Rules**                                                | **Report column**          |
+|-------------------|--------------|----------------------------------------------------------|----------------------------|
+| event             | Yes          | Event alias. Only activate-me-festival for now           | (which event)              |
+| first_name        | Yes          | Up to 60 characters                                      | First Name                 |
+| last_name         | Yes          | Up to 60                                                 | Last Name                  |
+| email             | Yes          | Valid email, up to 200                                   | Email                      |
+| company_name      | Yes          | Organisation name, up to 150                             | Company Name               |
+| mobile_number     | Yes          | Phone / WhatsApp, at least 7 digits, up to 40            | Mobile Number              |
+| designation       | No           | Their role, up to 120                                    | Designation                |
+| organisation_type | Yes          | One of the type options below                            | **New column**             |
+| interests         | No           | List, any of the interest options below                  | **New column**             |
+| activity          | No           | What they do, up to 150                                  | **New column**             |
+| website           | No           | Website or Instagram, up to 300                          | **New column**             |
+| message           | No           | Free text, up to 2000                                    | **New column**             |
+| consent           | Yes          | Must be true (agreed to be contacted)                    | **New column** (with date) |
+| page              | No           | Page the form was sent from                              | Optional                   |
+| company_url       | No           | Hidden spam trap. Real people leave it empty. Don't save | \-                         |
 
-**Example request:**
+**Type options:** Academy / club · Brand / sponsor · Performer / speaker
+· School / community group · Other
 
-```http
-POST /api/partner-applications HTTP/1.1
-Host: events.mwancloud.com
-Origin: https://www.activatemefest.com
-Content-Type: application/json
+**Interest options:** Title Sponsor · Event Sponsorships · Interactive
+Booths · Community Programs
 
-{
-  "event": "activate-me-festival",
-  "org": "Little Kickers Dubai",
-  "type": "Academy / club",
-  "activity": "Kids football academy, ages 4–14",
-  "interests": ["Title Sponsor", "Interactive Booths"],
-  "name": "Sara Ahmed",
-  "role": "Founder",
-  "email": "sara@example.com",
-  "phone": "+971 50 123 4567",
-  "website": "@littlekickersdxb",
-  "message": "We'd love a booth on both days.",
-  "consent": true,
-  "page": "/partner-with-us",
-  "company_url": ""
-}
-```
+4\. Example request
 
-## 5. Validation (server side)
+> POST /api/partner-applications
+>
+> Origin: https://www.activatemefest.com
+>
+> Content-Type: application/json
+>
+> {
+>
+> "event": "activate-me-festival",
+>
+> "first_name": "Sara",
+>
+> "last_name": "Ahmed",
+>
+> "email": "sara@example.com",
+>
+> "company_name": "Little Kickers Dubai",
+>
+> "mobile_number": "+971 50 123 4567",
+>
+> "designation": "Founder",
+>
+> "organisation_type": "Academy / club",
+>
+> "interests": \["Title Sponsor", "Interactive Booths"\],
+>
+> "activity": "Kids football academy, ages 4-14",
+>
+> "website": "@littlekickersdxb",
+>
+> "message": "We'd love a booth on both days.",
+>
+> "consent": true,
+>
+> "page": "/partner-with-us",
+>
+> "company_url": ""
+>
+> }
 
-The form already checks these in the browser, but the server must check them again, because
-browser checks can be bypassed.
+5\. Checks the API should do
 
-1. `Origin` is allowed (section 3), otherwise `403`.
-2. Body is valid JSON, otherwise `400`.
-3. If `company_url` is not empty, it's a bot: reply `200 {"ok": true}` but **do not save**.
-4. `event` is a known alias, otherwise `400`.
-5. `org`, `name` present after trimming; `email` valid; `phone` has at least 7 digits;
-   otherwise `400` with a message listing what's missing.
-6. `consent` is exactly `true`, otherwise `400`.
-7. `type` not in the list → store `Other`. `interests` → keep only values from the list.
-8. Trim all strings and cut them to the maximum lengths. Store as plain text; escape when
-   displaying in the admin.
+The form already checks these, but the API should check again since
+browser checks can be skipped:
 
-## 6. Spam protection (recommended)
+1.  Domain is allowed, otherwise 403.
 
-- **Rate limit:** about 10 requests per minute per IP address; above that reply `429`.
-- **Spam trap:** the hidden `company_url` field (section 5, step 3).
-- **Optional, later:** if spam becomes a problem, add a captcha (e.g. Google reCAPTCHA or Cloudflare
-  Turnstile). The form would then send one extra token field for the server to verify.
+2.  If company_url is filled in, it's a bot: reply ok but don't save.
 
-## 7. Responses
+3.  first_name, last_name, company_name, organisation_type, email
+    (valid), mobile_number (7+ digits) and consent = true are present,
+    otherwise 400.
 
-The form shows the `error` text to the visitor, so please keep it short and human-friendly.
+4.  Unknown organisation_type → save as Other. Unknown interests →
+    ignore.
 
-| Case | Status | Body |
-|---|---|---|
-| Saved (or spam trap hit) | `200` | `{"ok": true}` |
-| Invalid / missing fields | `400` | `{"ok": false, "error": "Please fill in your organisation, name, a valid email and phone number."}` |
-| Consent not given | `400` | `{"ok": false, "error": "Please tick the consent box."}` |
-| Origin not allowed | `403` | `{"ok": false, "error": "Origin not allowed"}` |
-| Too many requests | `429` | `{"ok": false, "error": "Too many attempts. Please wait a minute."}` |
-| Server problem | `500` / `503` | `{"ok": false, "error": "Applications aren't available right now."}` |
+5.  Trim text and cut to the max lengths. Store as plain text.
 
-The form treats any reply without `"ok": true` as a failure and shows `error` (or a generic
-message with the team's email address if there is none).
+6\. Responses
 
-## 8. What to store
+The form shows the error text to the person, so keep it short and
+friendly.
 
-Everything from section 4 (except `company_url`), plus:
+| **Case**                 | **Status** | **Reply**                                                                                                        |
+|--------------------------|------------|------------------------------------------------------------------------------------------------------------------|
+| Saved (or spam trap)     | 200        | {"ok": true}                                                                                                     |
+| Missing / invalid fields | 400        | {"ok": false, "error": "Please fill in your organisation, first and last name, a valid email and phone number."} |
+| Consent not ticked       | 400        | {"ok": false, "error": "Please tick the consent box."}                                                           |
+| Domain not allowed       | 403        | {"ok": false, "error": "Origin not allowed"}                                                                     |
+| Too many attempts        | 429        | {"ok": false, "error": "Too many attempts. Please wait a minute."}                                               |
+| Server problem           | 500        | {"ok": false, "error": "Applications aren't available right now."}                                               |
 
-| Field | Notes |
-|---|---|
-| `id` | Auto |
-| `event` | Link to the ActivateMe® Fest event |
-| `received_at` | Server time of submission (shown in Dubai time) |
-| `source_site` | Host from the `Origin` header, e.g. `www.activatemefest.com` |
-| `consent_at` | Same as `received_at`; record that consent was given and when |
-| `status` | `New` by default; then `Contacted`, `Interested`, `Joined`, `Declined` |
-| `notes` | Free text for the team |
+7\. What to save and show
 
-We suggest not storing IP addresses, or deleting them after a short time; they're only needed
-for rate limiting.
+- **Save:** in the Become a Partner report, with the new columns above,
+  plus the website it came from, **status** (New by default) and
+  **notes**. No need to keep IP addresses.
 
-## 9. Admin section ("Partner Applications" inside the event)
+- **In the report:** change status (New / Contacted / Interested /
+  Joined / Declined), add notes, filter by status, export to Excel,
+  delete (spam or data-removal requests). Team logins only.
 
-What the team needs, mirroring the temporary leads page used for testing:
+- **Nice to have:** when an application is marked Joined, one click to
+  add it to the General Database of partners.
 
-- List of applications, newest first: date, organisation, type, interests, contact name, role,
-  email, phone, website/Instagram, message, status.
-- Change status and add notes per application.
-- Filter by status.
-- Export to spreadsheet (CSV / Excel).
-- Delete an application (for spam, or if someone asks for their data to be removed).
-- Access limited to the team's platform accounts.
+8\. Next step
 
-**Nice to have:** when an application is marked `Joined`, a button to copy it into the General
-Database of partners (name, website, email, phone, partner type), so nobody retypes it.
-
-## 10. Switching the form over
-
-Once the endpoint is live, the embed code on the Partner page gets one extra attribute:
-
-```html
-<div id="activateme-partner"></div>
-<script src="https://acti-partner-landing-page.activateme-assistant.workers.dev/partner-form.js"
-        data-endpoint="https://events.mwancloud.com/api/partner-applications" defer></script>
-```
-
-(Or the form's default address is changed on our side, so the embed code stays the same.) The
-script file only contains the form's design and code; it stores no personal data. The platform team
-can also host the file themselves if preferred.
-
-The temporary Cloudflare database and leads page will then be switched off.
+Once the endpoint is ready, send me its address and I'll point the form
+to it. Nothing else changes on the website.
