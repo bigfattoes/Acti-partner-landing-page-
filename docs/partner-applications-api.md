@@ -1,13 +1,11 @@
 ActivateMe® Partner Form – API details
 
-What the form sends, what to check, and what to reply. Prepared by Aseel
-(Marketing).
-
-**Good news:** Reporting → **Become a Partner** already has First Name,
-Last Name, Email, Company Name, Mobile Number, Designation and Created
-date. The form now uses the same fields, so it could feed that report
-directly. It just needs a few **new columns** for the extra questions
-(marked below).
+I noticed there's already a **Become a Partner** report under Reporting,
+with First Name, Last Name, Email, Company Name, Mobile Number,
+Designation and Created date. I think this is where Andreas would like
+the applications to be stored, so I've matched the form's fields to it.
+It would just need a few **new columns** for the extra questions (marked
+below).
 
 1\. How it works
 
